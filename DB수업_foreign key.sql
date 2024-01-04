@@ -197,3 +197,34 @@ select * from book order by b_bookname asc;
 select * from book order by b_bookname desc;
 -- 11. 도서를 가격이 낮은 것 부터 조회하고 같은 가격일 경우 도서명을 가나다 순으로 조회
 select * from book order by b_price asc, b_bookname asc;
+-- 12. 주문 도서의 총 판매액 조회
+select sum(o_saleprice) from orders;
+-- 13. 1번 고객이 주문한 도서 총 판매액 조회 
+select sum(o_saleprice) from orders where customer_id = 1;
+-- 14. ORDERS 테이블로 부터 평균판매가, 최고판매가, 최저판매가 조회
+select avg(o_saleprice), max(o_saleprice), min(o_saleprice) from orders;
+-- 15. 고객별로 주문한 도서의 총 수량과 총 판매액 조회 (GROUP BY 활용)
+select customer_id, count(customer_id), sum(o_saleprice) from orders group by customer_id;
+-- 16. 가격이 8,000원 이상인 도서를 구매한 고객에 대해 고객별 주문 도서의 총 수량 조회 (GROUP BY 활용)
+select customer_id, count(customer_id) from orders where o_saleprice >= 8000 group by customer_id;
+--    (단, 8,000원 이상 도서 두 권 이상 구매한 고객만)
+select customer_id, count(*) from orders 
+	where o_saleprice >= 8000 
+			group by customer_id
+				having count(*) >= 2;
+-- 17. 김연아고객(고객번호 : 2) 총 구매액
+select customer_id, sum(o_saleprice) from orders where customer_id = 2 group by customer_id;
+select sum(o_saleprice) from orders where customer_id = (select id from customer where c_name = '김연아');
+-- 18. 김연아고객(고객번호 : 2)이 구매한 도서의 수
+select customer_id, count(customer_id) from orders where customer_id = 2 group by customer_id;
+select count(customer_id) from orders where customer_id = (select id from customer where c_name = '김연아');
+-- 19. 서점에 있는 도서의 총 권수
+select count(*) from book;
+-- 20. 출판사의 총 수
+select count(distinct b_publisher) from book;
+-- 21. 7월 4일 ~ 7일 사이에 주문한 도서의 주문번호 조회
+select * from orders where o_orderdate between '2023-07-04' and '2023-07-07';
+select * from orders where o_orderdate >= '2023-07-04' and o_orderdate <= '2023-07-07';
+-- 22. 7월 4일 ~ 7일 사이에 주문하지 않은 도서의 주문번호 조회
+select * from orders where o_orderdate not between '2023-07-04' and '2023-07-07';
+select * from orders where o_orderdate < '2023-07-04' or o_orderdate > '2023-07-07';
