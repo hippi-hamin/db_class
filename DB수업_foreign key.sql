@@ -105,3 +105,66 @@ select * from child3;
 update child3 set c1 = '수정내용' where id = 2;
 -- 여러 개를 수정할 경우 and가 아닌 , 사용
 update child3 set c1 = '수정내용', c2 = 'ㅎㅎㅎ' where id = 3;
+
+-- 연습 문제
+-- book table
+drop table if exists book;
+create table book(
+	id bigint auto_increment,
+    b_bookname varchar(20),
+    b_publisher varchar(20),
+    b_price int,
+    constraint pk_book primary key(id)
+);
+
+insert into book(b_bookname, b_publisher, b_price) values('축구 역사', '좋은출판사', 7000);
+insert into book(b_bookname, b_publisher, b_price) values('축구 리포트', '나푸출판사', 13000);
+insert into book(b_bookname, b_publisher, b_price) values('축구를 알려주마', '대한출판사', 22000);
+insert into book(b_bookname, b_publisher, b_price) values('배구의 바이블', '대한출판사', 35000);
+insert into book(b_bookname, b_publisher, b_price) values('피겨 교과서', '좋은출판사', 8000);
+insert into book(b_bookname, b_publisher, b_price) values('피칭의 단계별기술', '좋은출판사', 6000);
+insert into book(b_bookname, b_publisher, b_price) values('야구의 추억 이야기', '나이스미디어', 20000);
+insert into book(b_bookname, b_publisher, b_price) values('야구 읽어주는 남자', '나이스미디어', 13000);
+insert into book(b_bookname, b_publisher, b_price) values('올림픽스토리', '이야기당', 7500);
+insert into book(b_bookname, b_publisher, b_price) values('olympic history', 'strawberry', 13000);
+select * from book;
+
+-- customer table
+drop table if exists customer;
+create table customer(
+	id bigint auto_increment,
+    c_name varchar(20),
+    c_address varchar(20),
+    c_phone varchar(15),
+    constraint pk_customer primary key(id)
+);
+insert into customer(c_name, c_address, c_phone) values('손흥민', '영국 런던', '000-5000-0001');
+insert into customer(c_name, c_address, c_phone) values('김연아', '대한민국 서울', '000-6000-0001');
+insert into customer(c_name, c_address, c_phone) values('김연경', '대한민국 서울', '000-7000-0001');
+insert into customer(c_name, c_address, c_phone) values('류현진', '캐나다 토론토', '000-7000-0001');
+insert into customer(c_name, c_address, c_phone) values('이강인', '프랑스 파리', '000-8000-0001');
+select * from customer;
+
+-- orders table
+drop table if exists orders;
+create table orders(
+	id bigint auto_increment,
+    customer_id bigint,
+    book_id bigint,
+    o_saleprice int,
+    o_orderdate date,
+    constraint pk_orders primary key(id),
+    constraint fk_orders_c foreign key(customer_id) references customer(id),
+	constraint fk_orders_b foreign key(book_id) references book(id)
+);
+insert into orders(customer_id, book_id, o_saleprice, o_orderdate) values(1, 1, 6000, str_to_date('2023-07-01','%Y-%m-%d'));
+insert into orders(customer_id, book_id, o_saleprice, o_orderdate) values(1, 3, 21000, str_to_date('2023-07-03','%Y-%m-%d'));
+insert into orders(customer_id, book_id, o_saleprice, o_orderdate) values(2, 5, 8000, str_to_date('2023-07-03','%Y-%m-%d'));
+insert into orders(customer_id, book_id, o_saleprice, o_orderdate) values(3, 6, 6000, str_to_date('2023-07-04','%Y-%m-%d'));
+insert into orders(customer_id, book_id, o_saleprice, o_orderdate) values(4, 7, 20000, str_to_date('2023-07-05','%Y-%m-%d'));
+insert into orders(customer_id, book_id, o_saleprice, o_orderdate) values(1, 2, 12000, str_to_date('2023-07-07','%Y-%m-%d'));
+insert into orders(customer_id, book_id, o_saleprice, o_orderdate) values(4, 8, 13000, str_to_date('2023-07-07','%Y-%m-%d'));
+insert into orders(customer_id, book_id, o_saleprice, o_orderdate) values(3, 10, 12000, str_to_date('2023-07-08','%Y-%m-%d'));
+insert into orders(customer_id, book_id, o_saleprice, o_orderdate) values(2, 10, 7000, str_to_date('2023-07-09','%Y-%m-%d'));
+insert into orders(customer_id, book_id, o_saleprice, o_orderdate) values(3, 8, 13000, str_to_date('2023-07-10','%Y-%m-%d'));
+select * from orders;
