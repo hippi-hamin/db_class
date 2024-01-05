@@ -238,7 +238,7 @@ select c.c_name, o.o_saleprice from customer c, orders o
 select c.c_name, sum(o.o_saleprice) from customer c, orders o 
 	where c.id = o.customer_id 
 		group by c.id;
--- 26. 고객명과 고객이 주문한 도서명을 조회(3테이블 조인)
+-- 26. 고객명(customer)과 고객이 주문(orders)한 도서명(book)을 조회(3테이블 조인)
 select c.c_name, b.b_bookname from book b, customer c, orders o 
 	where b.id = o.book_id and c.id = o.customer_id
 		order by c.c_name asc;
@@ -251,4 +251,58 @@ select c.c_name, sum(o.o_saleprice) from customer c, orders o
 -- 29. 손흥민 고객의 총 구매수량과 고객명을 함께 조회
 select c.c_name, count(*) from customer c, orders o
 	where c.id = o.customer_id and c.c_name = '손흥민';
-    
+-- 30. 가장 비싼 도서의 이름을 조회
+select b_bookname from book where b_price = (select max(b_price) from book);
+-- 31. 책을 구매한 이력이 있는 고객의 이름을 조회
+-- 1.
+select c.c_name from customer c, orders o 
+	where c.id = o.customer_id
+		group by o.customer_id
+			having count(o.customer_id)>=1;
+-- 2.
+select c_name from customer where id in(select customer_id from orders);
+-- 32. 도서의 가격(PRICE)과 판매가격(SALEPRICE)의 차이가 가장 많이 나는 주문 조회
+-- select * from book;
+-- select * from orders;  
+-- select max(b.b_price - o.o_saleprice) from book b, orders o where b.id = o.book_id; -- 9번책이 6000원 차이로 가장 차이 많이 남.
+select * from book b, orders o where o.book_id = b.id 
+		and b.b_price - o.o_saleprice = (select max(b.b_price - o.o_saleprice) from book b, orders o where o.book_id = b.id);
+
+
+
+-- 33. 고객별 평균 구매 금액 이 도서의 판매 평균 금액 보다 높은 고객의 이름 조회
+-- select avg(o_saleprice) from orders; -- 도서의 판매 평균 금액
+-- select c.c_name, avg(o_saleprice) from customer c, orders o where c.id = o.customer_id group by customer_id; -- 고객별 평균 구매 금액
+select c.c_name from customer c, orders o 
+	where c.id = o.customer_id
+		group by o.customer_id
+			having avg(o.o_saleprice) > (select avg(o_saleprice) from orders);
+
+-- 34. 고객번호가 5인 고객의 주소를 대한민국 인천으로 변경 
+-- select * from customer;
+update customer set c_address = '대한민국 인천' where id = 5;
+
+-- 35. 김씨 성을 가진 고객이 주문한 총 판매액 조회
+select id from customer where c_name like '김%';
+select sum(o_saleprice) from orders where customer_id in(2,3);
+select sum(o_saleprice) from orders where customer_id in(select id from customer where c_name like '김%');
+
+-- alter : 테이블의 구조를 변경할 때 (컬럼이름 변경, 타입 변경, 컬럼삭제, 제약조건 추가 등)
+create table student(
+	id bigint,
+    s_name varchar(20),
+    s_mobile int
+);
+-- 테이블의 구조 확인
+desc student;
+desc book;
+-- 기존 컬럼에 제약조건 추가
+alter table student add constraint primary key(id);
+-- 기존 컬럼 타입 변경
+alter table student modify s_mobile varchar(30);
+-- 컬럼 추가
+alter table student add s_major varchar(30);
+-- 컬럼 이름 변경
+alter table student change s_mobile s_phone varchar(30);
+-- 컬럼 삭제
+alter table student drop s_major;
