@@ -125,7 +125,8 @@ insert into board_file_table(original_file_name, stored_file_name, board_id)
 insert into board_table(board_title, board_writer, board_contents, board_file_attached, member_id, category_id)
 	values('오늘 다녀온 맛집', 'bbb@member.com', '겁나 맛있어요', 1, 2, 1);    
 insert into board_file_table(original_file_name, stored_file_name, board_id)
-	values('음식.jpg', '2234989873242_음식.jpg', 13);    
+	values('음식.jpg', '2234989873242_음식.jpg', 13);   
+    
 -- 2. 게시글 목록 조회 
 -- 2.1 전체글 목록 조회
 select * from board_table;
@@ -153,10 +154,26 @@ update board_table set board_title='안녕하십니까_수정', board_contents='
 -- 5. 2번 회원이 자유게시판에 첫번째로 작성한 게시글 삭제 
 delete from board_table where id=5;
 -- 7. 페이징 처리(한 페이지당 글 3개씩)
+select * from board_table order by id desc;
+select * from board_table order by id desc limit 0, 3; -- 17, 16, 15 1페이지
+select * from board_table order by id desc limit 3, 3; -- 14, 13, 12 2페이지
+select * from board_table order by id desc limit 6, 3; -- 7, 6, 4 3페이지
+select * from board_table order by id desc limit 9, 3;
+select * from board_table order by id desc limit 12, 3;
+-- 한 페이지당 글 5개씩 
+select * from board_table order by id desc limit 0, 5; -- 1페이지
+select * from board_table order by id desc limit 5, 5; -- 2페이지
+select * from board_table order by id desc limit 10, 5; -- 3페이지
+-- 한페이지당 3개씩 출력하는 경우 전체 글 갯수가 20개라면 필요한 페이지 갯수는? 7개
+select count(*) from board_table;
 -- 7.1. 첫번째 페이지
 -- 7.2. 두번째 페이지
 -- 7.3. 세번째 페이지 
 -- 8. 검색(글제목 기준)
--- 8.1 검색결과를 오래된 순으로 조회 
+select * from board_table where board_title like '%오늘%';
+-- 8.1 검색결과를 오래된 순으로 조회
+select * from board_table where board_title like '%오늘%' order by id asc;
 -- 8.2 검색결과를 조회수 내림차순으로 조회 
+select * from board_table where board_title like '%오늘%' order by board_hits desc;
 -- 8.3 검색결과 페이징 처리 
+select * from board_table where board_title like '%오늘%' order by board_hits desc limit 0,3;
